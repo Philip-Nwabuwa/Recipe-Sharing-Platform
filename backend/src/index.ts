@@ -1,28 +1,35 @@
-import express from "express"
-import http from "http"
-import bodyPaser from "body-parser"
-import cookieParser from "cookie-parser"
-import compression from "compression"
-import cors from "cors"
+import express from "express";
+import http from "http";
+import bodyPaser from "body-parser";
+import cookieParser from "cookie-parser";
+import compression from "compression";
+import cors from "cors";
+import dotenv from "dotenv";
 
-const app = express()
+import connectDB from "./config/db";
+import router from "./router";
 
-app.use(cors ({
+const app = express();
+dotenv.config();
+
+connectDB();
+
+app.use(
+  cors({
     credentials: true,
-}))
+  })
+);
 
-app.use(compression())
-app.use(cookieParser())
-app.use(bodyPaser.json())
+app.use(compression());
+app.use(cookieParser());
+app.use(bodyPaser.json());
 
-app.get("/", (req, res) => {
-    res.send("Hello World")
-})
+app.use("/", router());
 
-const server = http.createServer(app)
+const server = http.createServer(app);
+const PORT = process.env.PORT || 5000;
+server.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
 
-server.listen(5000, () => {
-    console.log("Server is running on http://localhost:5000")
-})
-
-export default server
+export default server;
